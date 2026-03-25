@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function Assessments() {
   const { data: assessments, isLoading, refetch } = useListAssessments();
   const { toast } = useToast();
+  const assessmentList = Array.isArray(assessments) ? assessments : [];
   
   const [activeQuizId, setActiveQuizId] = useState<number | null>(null);
   const [resultId, setResultId] = useState<number | null>(null);
@@ -132,7 +133,7 @@ export default function Assessments() {
           </motion.div>
         ) : (
           <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {assessments?.map((assessment) => (
+            {assessmentList.map((assessment) => (
               <Card key={assessment.id} className="flex flex-col hover:shadow-md transition-shadow hover:border-primary/30">
                 <CardContent className="p-6 flex-1 flex flex-col">
                   <div className="flex justify-between items-start mb-4">

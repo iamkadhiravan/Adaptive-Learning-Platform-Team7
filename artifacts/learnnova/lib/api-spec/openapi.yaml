@@ -1,0 +1,837 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: LearnNova Adaptive Learning Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: students
+    description: Student operations
+  - name: courses
+    description: Course operations
+  - name: progress
+    description: Progress tracking
+  - name: assessments
+    description: Quiz and assessment operations
+  - name: concepts
+    description: Concept relationship operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /students/me:
+    get:
+      operationId: getStudent
+      tags: [students]
+      summary: Get current student profile
+      responses:
+        "200":
+          description: Student profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+    put:
+      operationId: updateStudent
+      tags: [students]
+      summary: Update student profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStudentInput"
+      responses:
+        "200":
+          description: Updated student
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+  /courses:
+    get:
+      operationId: listCourses
+      tags: [courses]
+      summary: List all available courses
+      responses:
+        "200":
+          description: List of courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Course"
+    post:
+      operationId: createCourse
+      tags: [courses]
+      summary: Create a new course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCourseInput"
+      responses:
+        "201":
+          description: Created course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+
+  /courses/{courseId}:
+    get:
+      operationId: getCourse
+      tags: [courses]
+      summary: Get a specific course with concepts
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Course detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseDetail"
+
+  /courses/{courseId}/enroll:
+    post:
+      operationId: enrollCourse
+      tags: [courses]
+      summary: Enroll in a course
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Enrollment created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Enrollment"
+
+  /progress:
+    get:
+      operationId: getProgress
+      tags: [progress]
+      summary: Get overall student progress summary
+      responses:
+        "200":
+          description: Progress summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProgressSummary"
+
+  /progress/memory-graph:
+    get:
+      operationId: getMemoryGraph
+      tags: [progress]
+      summary: Get memory retention graph data over time
+      responses:
+        "200":
+          description: Memory graph data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MemoryDataPoint"
+
+  /progress/knowledge-gaps:
+    get:
+      operationId: getKnowledgeGaps
+      tags: [progress]
+      summary: Get identified knowledge gaps for the student
+      responses:
+        "200":
+          description: Knowledge gaps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KnowledgeGap"
+
+  /progress/forgetting-curve:
+    get:
+      operationId: getForgettingCurve
+      tags: [progress]
+      summary: Get forgetting curve data for concepts
+      responses:
+        "200":
+          description: Forgetting curve data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ForgettingCurveItem"
+
+  /progress/learning-path:
+    get:
+      operationId: getLearningPath
+      tags: [progress]
+      summary: Get personalized AI-generated learning path
+      responses:
+        "200":
+          description: Personalized learning path
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LearningPath"
+
+  /assessments:
+    get:
+      operationId: listAssessments
+      tags: [assessments]
+      summary: List assessments for student
+      responses:
+        "200":
+          description: List of assessments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Assessment"
+
+  /assessments/{assessmentId}/submit:
+    post:
+      operationId: submitAssessment
+      tags: [assessments]
+      summary: Submit quiz answers
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssessmentSubmission"
+      responses:
+        "200":
+          description: Assessment result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssessmentResult"
+
+  /concepts:
+    get:
+      operationId: listConcepts
+      tags: [concepts]
+      summary: Get concept relationship map
+      parameters:
+        - name: courseId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Concept relationship map
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConceptMap"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [students]
+      summary: Get dashboard statistics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+          nullable: true
+        learningStyle:
+          type: string
+          enum: [visual, auditory, reading, kinesthetic]
+        streakDays:
+          type: integer
+        totalXp:
+          type: integer
+        level:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - learningStyle
+        - streakDays
+        - totalXp
+        - level
+        - createdAt
+
+    UpdateStudentInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        learningStyle:
+          type: string
+          enum: [visual, auditory, reading, kinesthetic]
+
+    Course:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        subject:
+          type: string
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        totalConcepts:
+          type: integer
+        estimatedHours:
+          type: integer
+        enrolledCount:
+          type: integer
+        isEnrolled:
+          type: boolean
+        progress:
+          type: number
+          format: float
+          nullable: true
+        thumbnailColor:
+          type: string
+      required:
+        - id
+        - title
+        - description
+        - subject
+        - difficulty
+        - totalConcepts
+        - estimatedHours
+        - enrolledCount
+        - isEnrolled
+        - thumbnailColor
+
+    CreateCourseInput:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        subject:
+          type: string
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        estimatedHours:
+          type: integer
+      required:
+        - title
+        - description
+        - subject
+        - difficulty
+        - estimatedHours
+
+    CourseDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        subject:
+          type: string
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        totalConcepts:
+          type: integer
+        estimatedHours:
+          type: integer
+        isEnrolled:
+          type: boolean
+        progress:
+          type: number
+          format: float
+          nullable: true
+        concepts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Concept"
+      required:
+        - id
+        - title
+        - description
+        - subject
+        - difficulty
+        - totalConcepts
+        - estimatedHours
+        - isEnrolled
+        - concepts
+
+    Enrollment:
+      type: object
+      properties:
+        id:
+          type: integer
+        courseId:
+          type: integer
+        studentId:
+          type: integer
+        enrolledAt:
+          type: string
+          format: date-time
+        progress:
+          type: number
+          format: float
+      required:
+        - id
+        - courseId
+        - studentId
+        - enrolledAt
+        - progress
+
+    ProgressSummary:
+      type: object
+      properties:
+        enrolledCourses:
+          type: integer
+        completedCourses:
+          type: integer
+        masteredConcepts:
+          type: integer
+        totalConcepts:
+          type: integer
+        averageRetention:
+          type: number
+          format: float
+        weeklyGoalProgress:
+          type: number
+          format: float
+        studyTimeThisWeek:
+          type: integer
+        assessmentsPassed:
+          type: integer
+      required:
+        - enrolledCourses
+        - completedCourses
+        - masteredConcepts
+        - totalConcepts
+        - averageRetention
+        - weeklyGoalProgress
+        - studyTimeThisWeek
+        - assessmentsPassed
+
+    MemoryDataPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        retention:
+          type: number
+          format: float
+        conceptsStudied:
+          type: integer
+        studyMinutes:
+          type: integer
+      required:
+        - date
+        - retention
+        - conceptsStudied
+        - studyMinutes
+
+    KnowledgeGap:
+      type: object
+      properties:
+        id:
+          type: integer
+        conceptName:
+          type: string
+        subject:
+          type: string
+        masteryLevel:
+          type: number
+          format: float
+        recommendedAction:
+          type: string
+        priority:
+          type: string
+          enum: [high, medium, low]
+        relatedConcepts:
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - conceptName
+        - subject
+        - masteryLevel
+        - recommendedAction
+        - priority
+        - relatedConcepts
+
+    ForgettingCurveItem:
+      type: object
+      properties:
+        conceptName:
+          type: string
+        lastStudied:
+          type: string
+        retentionNow:
+          type: number
+          format: float
+        retentionAtStudy:
+          type: number
+          format: float
+        nextReviewDate:
+          type: string
+        daysSinceStudied:
+          type: integer
+      required:
+        - conceptName
+        - lastStudied
+        - retentionNow
+        - retentionAtStudy
+        - nextReviewDate
+        - daysSinceStudied
+
+    LearningPath:
+      type: object
+      properties:
+        nextConcepts:
+          type: array
+          items:
+            $ref: "#/components/schemas/LearningStep"
+        recommendedCourses:
+          type: array
+          items:
+            type: integer
+        estimatedTimeToMastery:
+          type: integer
+        aiInsight:
+          type: string
+      required:
+        - nextConcepts
+        - recommendedCourses
+        - estimatedTimeToMastery
+        - aiInsight
+
+    LearningStep:
+      type: object
+      properties:
+        conceptId:
+          type: integer
+        conceptName:
+          type: string
+        reason:
+          type: string
+        estimatedMinutes:
+          type: integer
+        priority:
+          type: integer
+      required:
+        - conceptId
+        - conceptName
+        - reason
+        - estimatedMinutes
+        - priority
+
+    Assessment:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        courseId:
+          type: integer
+        courseName:
+          type: string
+        questionCount:
+          type: integer
+        timeLimit:
+          type: integer
+        status:
+          type: string
+          enum: [pending, in_progress, completed]
+        score:
+          type: number
+          format: float
+          nullable: true
+        adaptiveLevel:
+          type: string
+          enum: [easy, medium, hard]
+      required:
+        - id
+        - title
+        - courseId
+        - courseName
+        - questionCount
+        - timeLimit
+        - status
+        - adaptiveLevel
+
+    AssessmentSubmission:
+      type: object
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              questionId:
+                type: integer
+              answer:
+                type: string
+            required:
+              - questionId
+              - answer
+        timeTaken:
+          type: integer
+      required:
+        - answers
+        - timeTaken
+
+    AssessmentResult:
+      type: object
+      properties:
+        assessmentId:
+          type: integer
+        score:
+          type: number
+          format: float
+        correctAnswers:
+          type: integer
+        totalQuestions:
+          type: integer
+        xpEarned:
+          type: integer
+        conceptsImproved:
+          type: array
+          items:
+            type: string
+        feedback:
+          type: string
+        nextRecommendation:
+          type: string
+      required:
+        - assessmentId
+        - score
+        - correctAnswers
+        - totalQuestions
+        - xpEarned
+        - conceptsImproved
+        - feedback
+        - nextRecommendation
+
+    Concept:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        masteryLevel:
+          type: number
+          format: float
+        prerequisites:
+          type: array
+          items:
+            type: integer
+        isUnlocked:
+          type: boolean
+      required:
+        - id
+        - name
+        - description
+        - masteryLevel
+        - prerequisites
+        - isUnlocked
+
+    ConceptMap:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConceptNode"
+        edges:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConceptEdge"
+      required:
+        - nodes
+        - edges
+
+    ConceptNode:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        subject:
+          type: string
+        masteryLevel:
+          type: number
+          format: float
+        x:
+          type: number
+        y:
+          type: number
+      required:
+        - id
+        - name
+        - subject
+        - masteryLevel
+        - x
+        - y
+
+    ConceptEdge:
+      type: object
+      properties:
+        source:
+          type: integer
+        target:
+          type: integer
+        type:
+          type: string
+          enum: [prerequisite, related, advanced]
+      required:
+        - source
+        - target
+        - type
+
+    DashboardStats:
+      type: object
+      properties:
+        streakDays:
+          type: integer
+        totalXp:
+          type: integer
+        level:
+          type: integer
+        enrolledCourses:
+          type: integer
+        masteredConcepts:
+          type: integer
+        averageRetention:
+          type: number
+          format: float
+        weeklyStudyMinutes:
+          type: integer
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityItem"
+        upcomingReviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReviewItem"
+      required:
+        - streakDays
+        - totalXp
+        - level
+        - enrolledCourses
+        - masteredConcepts
+        - averageRetention
+        - weeklyStudyMinutes
+        - recentActivity
+        - upcomingReviews
+
+    ActivityItem:
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        timeAgo:
+          type: string
+        xpGained:
+          type: integer
+          nullable: true
+      required:
+        - type
+        - description
+        - timeAgo
+
+    ReviewItem:
+      type: object
+      properties:
+        conceptName:
+          type: string
+        dueIn:
+          type: string
+        retentionLevel:
+          type: number
+          format: float
+      required:
+        - conceptName
+        - dueIn
+        - retentionLevel

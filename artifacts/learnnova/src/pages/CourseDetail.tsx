@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, CheckCircle2, Lock, Clock, BookOpen, Network } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function CourseDetail() {
   const params = useParams();
@@ -37,6 +38,16 @@ export default function CourseDetail() {
   }
 
   if (!course) return <div>Course not found</div>;
+
+  const conceptEdges = Array.isArray((conceptMap as any)?.edges)
+    ? (conceptMap as any).edges
+    : [];
+  const conceptNodes = Array.isArray((conceptMap as any)?.nodes)
+    ? (conceptMap as any).nodes
+    : [];
+  const courseConcepts = Array.isArray((course as any).concepts)
+    ? (course as any).concepts
+    : [];
 
   return (
     <div className="space-y-8">
@@ -95,9 +106,9 @@ export default function CourseDetail() {
               {conceptMap && (
                 <svg ref={svgRef} viewBox="0 0 100 100" className="w-full h-full p-4 overflow-visible">
                   {/* Edges */}
-                  {conceptMap.edges.map((edge, i) => {
-                    const source = conceptMap.nodes.find(n => n.id === edge.source);
-                    const target = conceptMap.nodes.find(n => n.id === edge.target);
+                  {conceptEdges.map((edge: any, i: number) => {
+                    const source = conceptNodes.find((n: any) => n.id === edge.source);
+                    const target = conceptNodes.find((n: any) => n.id === edge.target);
                     if (!source || !target) return null;
                     return (
                       <line 
@@ -112,7 +123,7 @@ export default function CourseDetail() {
                     );
                   })}
                   {/* Nodes */}
-                  {conceptMap.nodes.map(node => {
+                  {conceptNodes.map((node: any) => {
                     let color = "text-muted-foreground bg-muted";
                     let fill = "currentColor";
                     if (node.masteryLevel >= 80) fill = "hsl(var(--emerald-500, 150 84% 40%))";
@@ -147,7 +158,7 @@ export default function CourseDetail() {
         <div className="space-y-6">
           <h3 className="text-2xl font-display font-bold">Curriculum</h3>
           <div className="space-y-3">
-            {course.concepts.map((concept, i) => (
+            {courseConcepts.map((concept: any) => (
               <Card key={concept.id} className={cn("transition-all duration-200", !concept.isUnlocked && "opacity-60 bg-muted/50")}>
                 <CardContent className="p-4 flex gap-4">
                   <div className="shrink-0 pt-1">

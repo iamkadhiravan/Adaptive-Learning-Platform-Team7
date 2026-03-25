@@ -12,6 +12,9 @@ export default function ProgressTracker() {
   const { data: gaps } = useGetKnowledgeGaps();
   const { data: forgettingCurve } = useGetForgettingCurve();
   const { data: learningPath } = useGetLearningPath();
+  const gapList = Array.isArray(gaps) ? gaps : [];
+  const memoryData = Array.isArray(memoryGraph) ? memoryGraph : [];
+  const forgettingData = Array.isArray(forgettingCurve) ? forgettingCurve : [];
 
   return (
     <div className="space-y-8">
@@ -60,9 +63,9 @@ export default function ProgressTracker() {
           </CardHeader>
           <CardContent>
             <div className="h-[300px] w-full">
-              {memoryGraph && (
+              {memoryData.length > 0 && (
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={memoryGraph} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <AreaChart data={memoryData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorRetention" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
@@ -93,9 +96,9 @@ export default function ProgressTracker() {
           </CardHeader>
           <CardContent>
             <div className="h-[250px] w-full">
-              {forgettingCurve && (
+              {forgettingData.length > 0 && (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={forgettingCurve.slice(0, 5)} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                  <BarChart data={forgettingData.slice(0, 5)} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                     <XAxis dataKey="conceptName" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
                     <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} domain={[0, 100]} />
@@ -118,7 +121,7 @@ export default function ProgressTracker() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {gaps?.map((gap) => (
+            {gapList.map((gap) => (
               <div key={gap.id} className="p-4 rounded-xl border border-border bg-card hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between">
                   <div>
@@ -135,7 +138,7 @@ export default function ProgressTracker() {
                 </div>
               </div>
             ))}
-            {gaps?.length === 0 && (
+            {gapList.length === 0 && (
               <div className="p-8 text-center text-muted-foreground">
                 <Target className="w-12 h-12 mx-auto mb-3 opacity-20" />
                 <p>No major knowledge gaps detected. Keep going!</p>

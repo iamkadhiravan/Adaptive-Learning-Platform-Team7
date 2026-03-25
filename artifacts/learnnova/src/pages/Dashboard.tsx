@@ -17,6 +17,16 @@ export default function Dashboard() {
     );
   }
 
+  const firstName =
+    typeof (student as any).name === "string" && (student as any).name.length > 0
+      ? (student as any).name.split(" ")[0]
+      : "Student";
+
+  const upcomingReviews =
+    Array.isArray((stats as any).upcomingReviews) ? (stats as any).upcomingReviews : [];
+  const recentActivity =
+    Array.isArray((stats as any).recentActivity) ? (stats as any).recentActivity : [];
+
   const statCards = [
     { label: "Enrolled Courses", value: stats.enrolledCourses, icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10" },
     { label: "Mastered Concepts", value: stats.masteredConcepts, icon: Star, color: "text-amber-500", bg: "bg-amber-500/10" },
@@ -31,7 +41,7 @@ export default function Dashboard() {
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-accent p-8 text-white shadow-xl shadow-primary/20">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-display font-bold">Welcome back, {student.name.split(' ')[0]}! 👋</h1>
+            <h1 className="text-3xl md:text-4xl font-display font-bold">Welcome back, {firstName}! 👋</h1>
             <p className="mt-2 text-primary-foreground/80 max-w-xl text-lg">
               You're doing great! Keep up the momentum to master your current courses.
             </p>
@@ -96,13 +106,13 @@ export default function Dashboard() {
                   <h3 className="text-lg font-bold text-foreground">AI Learning Path</h3>
                   <p className="text-muted-foreground mt-1 mb-4">Based on your forgetting curve, here's what you should focus on today to maximize retention.</p>
                   
-                  {stats.upcomingReviews.length > 0 && (
+                  {upcomingReviews.length > 0 && (
                     <div className="bg-background rounded-xl p-4 border border-border flex items-center justify-between shadow-sm">
                       <div>
-                        <div className="font-bold">{stats.upcomingReviews[0].conceptName}</div>
+                        <div className="font-bold">{upcomingReviews[0].conceptName}</div>
                         <div className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-destructive animate-pulse"></span>
-                          Retention dropped to {Math.round(stats.upcomingReviews[0].retentionLevel)}%
+                          Retention dropped to {Math.round(upcomingReviews[0].retentionLevel)}%
                         </div>
                       </div>
                       <Link href="/progress" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
@@ -125,7 +135,7 @@ export default function Dashboard() {
             </div>
             <Card>
               <div className="divide-y divide-border/50">
-                {stats.recentActivity.map((activity, i) => (
+                {recentActivity.map((activity, i) => (
                   <div key={i} className="p-4 flex items-center gap-4 hover:bg-muted/30 transition-colors">
                     <div className="p-2 rounded-full bg-muted text-muted-foreground">
                       <Activity className="w-4 h-4" />
@@ -152,7 +162,7 @@ export default function Dashboard() {
             <h3 className="text-xl font-display font-bold mb-4">Upcoming Reviews</h3>
             <Card>
               <div className="p-2 space-y-2">
-                {stats.upcomingReviews.map((review, i) => (
+                {upcomingReviews.map((review, i) => (
                   <div key={i} className="p-3 rounded-xl border border-transparent hover:border-border hover:bg-muted/30 transition-all flex items-center justify-between">
                     <div>
                       <div className="font-medium text-sm">{review.conceptName}</div>
@@ -166,7 +176,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 ))}
-                {stats.upcomingReviews.length === 0 && (
+                {upcomingReviews.length === 0 && (
                   <div className="p-6 text-center text-muted-foreground text-sm">
                     All caught up! 🎉
                   </div>

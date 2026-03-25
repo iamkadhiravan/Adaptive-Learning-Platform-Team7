@@ -13,11 +13,22 @@ export default function Courses() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  const filteredCourses = courses?.filter(c => {
-    const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) || c.subject.toLowerCase().includes(search.toLowerCase());
-    const matchesFilter = filter === "all" || (filter === "enrolled" ? c.isEnrolled : c.difficulty === filter);
-    return matchesSearch && matchesFilter;
-  });
+  const filteredCourses = Array.isArray(courses)
+    ? courses.filter((c) => {
+        const title = typeof (c as any).title === "string" ? (c as any).title : "";
+        const subject =
+          typeof (c as any).subject === "string" ? (c as any).subject : "";
+        const searchLower = search.toLowerCase();
+
+        const matchesSearch =
+          title.toLowerCase().includes(searchLower) ||
+          subject.toLowerCase().includes(searchLower);
+        const matchesFilter =
+          filter === "all" ||
+          (filter === "enrolled" ? Boolean((c as any).isEnrolled) : (c as any).difficulty === filter);
+        return matchesSearch && matchesFilter;
+      })
+    : [];
 
   return (
     <div className="space-y-8">

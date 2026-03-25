@@ -1,0 +1,83 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+  }
+  
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .app-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+  }
+  
+  .app-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .student-info {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .student-info label {
+    font-weight: bold;
+  }
+  
+  .student-info input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    flex: 1;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .tabs button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: all 0.3s;
+  }
+  
+  .tabs button.active {
+    background: white;
+    color: #667eea;
+  }
+  
+  .tabs button:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  .content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    min-height: 500px;
+  }
